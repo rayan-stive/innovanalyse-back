@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request, session
 from flask_mysqldb import MySQL, MySQLdb
-from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 from flask_cors import CORS
 from datetime import timedelta
 
@@ -22,6 +22,8 @@ mysql = MySQL(app)
 
 @app.route('/')
 def accueil():
+    password = generate_password_hash('Rayan123')
+    print(password)
 
     if 'username' in session:
         username = session['username']
@@ -45,12 +47,12 @@ def login():
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-        sql = "SELECT * FROM compte WHERE username=%s"
+        sql = "SELECT * FROM compte where username=%s"
+
         sql_here = (_username,)
 
         cursor.execute(sql, sql_here)
         row = cursor.fetchone()
-
         username = cursor.fetchone['username']
         password = cursor.fetchone['password'] 
 
