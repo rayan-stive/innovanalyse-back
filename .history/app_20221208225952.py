@@ -193,16 +193,6 @@ class EditTempsRessource(Resource):
         db.session.commit()
         return temps_schema.dump(billetin)
 
-
-    # Suppprimer un billetin de salaire
-    def delete(self, id):
-        billetin = Temps.query.get_or_404(id)
-
-        db.session.delete(billetin)
-        db.session.commit()
-
-        return '', 204
-
 api.add_resource(EditTempsRessource, '/feuille_temps/<int:id>')
 
 

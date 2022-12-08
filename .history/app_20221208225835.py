@@ -167,41 +167,28 @@ class EditTempsRessource(Resource):
             billetin.nom = request.json["nom"]
 
         if "prenom" in request.json:
-            billetin.prenom = request.json["prenom"]
+            prenom = request.json["prenom"]
         
         if "fonction" in request.json:
-            billetin.fonction = request.json["fonction"]
+            fonction = request.json["fonction"]
         
         if "brut" in request.json:
-            billetin.brut = request.json["brut"]
+            brut = request.json["brut"]
 
         if "cotisation" in request.json:
-            billetin.cotisation = request.json["cotisation"]
+            cotisation = request.json["cotisation"]
 
         if "cadre" in request.json:
-            billetin.cadre = request.json["cadre"]
+            cadre = request.json["cadre"]
         
         if "entre" in request.json:
-            billetin.entre = request.json["entre"]
+            entre = request.json["entre"]
         
         if "sortie" in request.json:
-            billetin.sortie = request.json["sortie"]
+            sortie = request.json["sortie"]
         
         if "participation" in request.json:
-            billetin.participation = request.json["participation"]
-
-        db.session.commit()
-        return temps_schema.dump(billetin)
-
-
-    # Suppprimer un billetin de salaire
-    def delete(self, id):
-        billetin = Temps.query.get_or_404(id)
-
-        db.session.delete(billetin)
-        db.session.commit()
-
-        return '', 204
+            participation = request.json["participation"]
 
 api.add_resource(EditTempsRessource, '/feuille_temps/<int:id>')
 
