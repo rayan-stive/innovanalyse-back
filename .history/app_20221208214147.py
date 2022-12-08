@@ -34,11 +34,11 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String, unique=True, nullable=False)
     email = db.Column(db.String)
-    password = db.Column(db.String)
+    # password = db.Column(db.String)
 
 class UserSchemas(ma.Schema):
     class Meta:
-        fields = ("id", "username", "email", "password")
+        fields = ("id", "username", "email")
         model = User
 
 user_schema = UserSchemas()
@@ -46,7 +46,7 @@ user_schemas = UserSchemas(many=True)
 
 
 # Feuille de temps
-class Temps(db.Model):
+class Temp(db.Model):
     __tablename__ = "temps"
     id = db.Column(db.Integer, primary_key=True)
     nom = db.Column(db.String, unique=True, nullable=False)
@@ -71,18 +71,16 @@ temps_schemas = TempsSchemas(many=True)
 """ CONTROLLEUR """
 
 ## Utilisateur
+
 class UserListRessource(Resource):
-    # Liste utilisateur
     def get(self):
         users = User.query.all()
         return user_schemas.dump(users)
 
-    # Nouveau utilisateur
     def post(self):
         user = User(
             username = request.json["username"],
-            email = request.json["email"],
-            password = request.json["password"]
+            email = request.json["email"]
         )
         db.session.add(user)
         db.session.commit()
@@ -90,49 +88,14 @@ class UserListRessource(Resource):
 
 api.add_resource(UserListRessource, '/utilisateurs')
 
-# Profile d'utilisateur
-class UserProfilResource(Resource):
-    # Affiche profil
-    def get(self, id):
-        profil = User.query.get_or_404(id)
-        return user_schema.dump(profil)
-
-    # Modifier un utilisateur
-    def patch(self, id):
-        user = User.query.get_or_404(id)
-
-        if "username" in request.json :
-            user.username = request.json["username"]
-
-        if "email" in request.json:
-            user.email = request.json["email"]
-
-        if "password" in request.json:
-            user.password = request.json["password"]
-
-        db.session.commit()
-
-        return user_schema.dump(user)
-
-    # Supprimer un utilisateur
-    def delete(self, id):
-        user = User.query.get_or_404(id)
-
-        db.session.delete(user)
-        db.session.commit()
-        return '', 204
-
-api.add_resource(UserProfilResource, '/utilisateurs/<int:id>')
-
 
 ## Feuille de temps
+
 class TempsListRessource(Resource):
-    # Liste feuille de temps
     def get(self):
         temps = Temps.query.all()
         return temps_schemas.dump(temps)
     
-    # Nouveau billetin de salaire
     def post(self):
         temp = Temps(
             nom = request.json["nom"],
@@ -150,11 +113,6 @@ class TempsListRessource(Resource):
         db.session.commit()
         return temps_schema.dump(temp)
 api.add_resource(TempsListRessource, '/feuille_temps')
-
-
-# Editer une billetin de salaire
-
-
 
 ## Login
 @app.route('/')
@@ -182,11 +140,12 @@ def login():
     return render_template('login.html')
 
 
-# Creation de base de données
-with app.app_context():
-    db.create_all()
 
 # Lancement de l'application
 if __name__ == "__main__":
+    # Creation de base de données
+    with app.app_context():
+        db.create_all()
+    
     # Excecuter le serveur
     app.run(debug=True)
